@@ -30,26 +30,39 @@ void MorseSensor::update() {
             isReceiving = false;
             signalDuration = currentTime - signalStartTime;
 
+            Serial.print(signalDuration);
+
             // Rozpoznanie kropki lub kreski na podstawie czasu trwania sygnału
             if (signalDuration <= _dotLength) {
                 morseSymbol += ".";  // Dodajemy kropkę
+                Serial.print(".");
             } else if (signalDuration <= 3 * _dotLength) {
                 morseSymbol += "-";  // Dodajemy kreskę
+                Serial.print("-");
             }
 
             // Ustawiamy czas zakończenia sygnału
             signalEndTime = currentTime;
-        } else if ( (currentTime - signalEndTime >= 3 * _dotLength) && (!morseSymbol.isEmpty()) ) {
+
+        } else if ( (currentTime - signalEndTime >= 2 * _dotLength) && (!morseSymbol.isEmpty()) ) {
             // W przypadku długiej przerwy przetwarzamy kompletny symbol Morse'a
+
+            Serial.println(currentTime - signalEndTime);
+
             char decodedChar = decodeMorseSymbol(morseSymbol);
+            
+            Serial.print(decodedChar);
+
             if (decodedChar != ' ') {
                 decodedMessage += decodedChar; // Dodajemy symbol do wiadomości
             }
             morseSymbol = ""; // Reset symbolu po jego przetworzeniu
-        } else if (currentTime - signalEndTime >= 7 * _dotLength && !decodedMessage.isEmpty()) {
+        } else if ((currentTime - signalEndTime >= 4.6 * _dotLength) && (!decodedMessage.isEmpty()) ) {
             // Długa przerwa oznacza koniec wiadomości
-            newMessage = true; // Flaga, że mamy nową wiadomość
-        }
+            newMessage = true; // Flaga, że mamy nową, pełną wiadomość
+        } 
+        
+            
     }
 }
 
@@ -69,32 +82,32 @@ bool MorseSensor::hasNewMessage() {
 
 // Dekodowanie symbolu Morse'a
 char MorseSensor::decodeMorseSymbol(String symbol) {
-    if (symbol == ".-")     return 'A';
-    if (symbol == "-...")   return 'B';
-    if (symbol == "-.-.")   return 'C';
-    if (symbol == "-..")    return 'D';
-    if (symbol == ".")      return 'E';
-    if (symbol == "..-.")   return 'F';
-    if (symbol == "--.")    return 'G';
-    if (symbol == "....")   return 'H';
-    if (symbol == "..")     return 'I';
-    if (symbol == ".---")   return 'J';
-    if (symbol == "-.-")    return 'K';
-    if (symbol == ".-..")   return 'L';
-    if (symbol == "--")     return 'M';
-    if (symbol == "-.")     return 'N';
-    if (symbol == "---")    return 'O';
-    if (symbol == ".--.")   return 'P';
-    if (symbol == "--.-")   return 'Q';
-    if (symbol == ".-.")    return 'R';
-    if (symbol == "...")    return 'S';
-    if (symbol == "-")      return 'T';
-    if (symbol == "..-")    return 'U';
-    if (symbol == "...-")   return 'V';
-    if (symbol == ".--")    return 'W';
-    if (symbol == "-..-")   return 'X';
-    if (symbol == "-.--")   return 'Y';
-    if (symbol == "--..")   return 'Z';
+    if (symbol == ".-")     return 'a';
+    if (symbol == "-...")   return 'b';
+    if (symbol == "-.-.")   return 'c';
+    if (symbol == "-..")    return 'd';
+    if (symbol == ".")      return 'e';
+    if (symbol == "..-.")   return 'f';
+    if (symbol == "--.")    return 'g';
+    if (symbol == "....")   return 'h';
+    if (symbol == "..")     return 'i';
+    if (symbol == ".---")   return 'j';
+    if (symbol == "-.-")    return 'k';
+    if (symbol == ".-..")   return 'l';
+    if (symbol == "--")     return 'm';
+    if (symbol == "-.")     return 'n';
+    if (symbol == "---")    return 'o';
+    if (symbol == ".--.")   return 'p';
+    if (symbol == "--.-")   return 'q';
+    if (symbol == ".-.")    return 'r';
+    if (symbol == "...")    return 's';
+    if (symbol == "-")      return 't';
+    if (symbol == "..-")    return 'u';
+    if (symbol == "...-")   return 'v';
+    if (symbol == ".--")    return 'w';
+    if (symbol == "-..-")   return 'x';
+    if (symbol == "-.--")   return 'y';
+    if (symbol == "--..")   return 'z';
     if (symbol == "-----")  return '0';
     if (symbol == ".----")  return '1';
     if (symbol == "..---")  return '2';

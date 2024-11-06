@@ -5,7 +5,7 @@
 
 class MorseSensor {
 public:
-    MorseSensor(int sensorPin, int threshold, unsigned int dotLength = 53);
+    MorseSensor(int sensorPin, int threshold, unsigned int dotLength = 75);
     void begin(); // Inicjalizacja
     void update(); // Aktualizacja odbioru sygnałów
     String getMessage(); // Pobierz zdekodowaną wiadomość
