@@ -13,7 +13,7 @@ WiFiServer server(20);  // Używamy serwera TCP na porcie 20
 // ***** KONFIGURACJA CZUJNIKA MORSE'A *****
 #define sensorPin A0
 #define threshold 512
-// #define 53 // Długość kropki w milisekundach (domyślnie 53)
+// #define 75 // Długość kropki w milisekundach (domyślnie: dotLength nadajnika + 15 ms)
 MorseSensor morseSensor(sensorPin, threshold);
 
 // ***** KONFIGURACJA LCD *****
@@ -24,14 +24,12 @@ String messageToScroll = ""; // Przechowuje wiadomość do przewijania
 unsigned int scrollIndex = 0; // Aktualny indeks przewijania
 unsigned long previousMillis = 0; // Czas ostatniego przewinięcia
 const long scrollInterval = 450; // Interwał przewijania (450 ms)
-            
+
 void setup() { 
     // Konfiguracja Wi-Fi
     WiFi.softAP(ssid, password);
     WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
     server.begin();
-
-    Serial.begin(9600);
 
     // Inicjalizacja LCD
     lcd.init();
@@ -87,8 +85,6 @@ void loop() {
                 if (morseSensor.hasNewMessage()) {
                     lcd.clear();
                     messageToScroll = morseSensor.getMessage();
-                    Serial.println();
-                    Serial.println(messageToScroll);
                     client.println(messageToScroll);
                     scrollIndex = 0;
                     scrollText();

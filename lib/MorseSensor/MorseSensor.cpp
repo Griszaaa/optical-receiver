@@ -34,11 +34,9 @@ void MorseSensor::update() {
 
             // Rozpoznanie kropki lub kreski na podstawie czasu trwania sygnału
             if (signalDuration <= _dotLength) {
-                morseSymbol += ".";  // Dodajemy kropkę
-                Serial.print(".");
+                morseSymbol += "."; // Dodajemy kropkę 
             } else if (signalDuration <= 3 * _dotLength) {
-                morseSymbol += "-";  // Dodajemy kreskę
-                Serial.print("-");
+                morseSymbol += "-"; // Dodajemy kreskę
             }
 
             // Ustawiamy czas zakończenia sygnału
@@ -46,13 +44,7 @@ void MorseSensor::update() {
 
         } else if ( (currentTime - signalEndTime >= 2 * _dotLength) && (!morseSymbol.isEmpty()) ) {
             // W przypadku długiej przerwy przetwarzamy kompletny symbol Morse'a
-
-            Serial.println(currentTime - signalEndTime);
-
             char decodedChar = decodeMorseSymbol(morseSymbol);
-            
-            Serial.print(decodedChar);
-
             if (decodedChar != ' ') {
                 decodedMessage += decodedChar; // Dodajemy symbol do wiadomości
             }
@@ -65,7 +57,6 @@ void MorseSensor::update() {
             
     }
 }
-
 
 // Pobranie zdekodowanej wiadomości
 String MorseSensor::getMessage() {
