@@ -30,8 +30,6 @@ void MorseSensor::update() {
             isReceiving = false;
             signalDuration = currentTime - signalStartTime;
 
-            Serial.print(signalDuration);
-
             // Rozpoznanie kropki lub kreski na podstawie czasu trwania sygnału
             if (signalDuration <= _dotLength) {
                 morseSymbol += "."; // Dodajemy kropkę 
