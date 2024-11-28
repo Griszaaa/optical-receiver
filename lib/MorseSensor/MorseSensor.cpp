@@ -4,7 +4,7 @@
 MorseSensor::MorseSensor(int pin, int thresh, unsigned int dotLength) 
     : sensorPin(pin), threshold(thresh), isReceiving(false), signalStartTime(0),
       signalDuration(0), signalEndTime(0), _dotLength(dotLength), newMessage(false), 
-      morseSymbol(""), decodedMessage("") {}
+      spaceAdded(false), morseSymbol(""), decodedMessage("") {}
 
 // Inicjalizacja
 void MorseSensor::begin() {
@@ -22,6 +22,7 @@ void MorseSensor::update() {
         if (!isReceiving) {
             // Rozpoczynamy odbiór sygnału
             isReceiving = true;
+            spaceAdded = false;
             signalStartTime = currentTime;
         }
     } else {
@@ -29,27 +30,42 @@ void MorseSensor::update() {
         if (isReceiving) {
             isReceiving = false;
             signalDuration = currentTime - signalStartTime;
+            
+            Serial.print(signalDuration);
 
             // Rozpoznanie kropki lub kreski na podstawie czasu trwania sygnału
             if (signalDuration <= _dotLength) {
+                Serial.print(".");
                 morseSymbol += "."; // Dodajemy kropkę 
             } else if (signalDuration <= 3 * _dotLength) {
+                Serial.print("-");
                 morseSymbol += "-"; // Dodajemy kreskę
             }
 
             // Ustawiamy czas zakończenia sygnału
             signalEndTime = currentTime;
 
-        } else if ( (currentTime - signalEndTime >= 2 * _dotLength) && (!morseSymbol.isEmpty()) ) {
+        } else if ( (currentTime - signalEndTime >= 1.8 * _dotLength) && (!morseSymbol.isEmpty()) ) {
             // W przypadku długiej przerwy przetwarzamy kompletny symbol Morse'a
             char decodedChar = decodeMorseSymbol(morseSymbol);
-            if (decodedChar != ' ') {
+            Serial.print(currentTime - signalEndTime);
+            Serial.println(decodedChar);
+
+            if (decodedChar != '/') {
                 decodedMessage += decodedChar; // Dodajemy symbol do wiadomości
+            } else if (decodedChar == '/' && !decodedMessage.isEmpty()) {
+                newMessage = true;
             }
+
             morseSymbol = ""; // Reset symbolu po jego przetworzeniu
-        } else if ((currentTime - signalEndTime >= 4.6 * _dotLength) && (!decodedMessage.isEmpty()) ) {
-            // Długa przerwa oznacza koniec wiadomości
-            newMessage = true; // Flaga, że mamy nową, pełną wiadomość
+
+        } else if ((currentTime - signalEndTime >= 4.5 * _dotLength) && (!decodedMessage.isEmpty() && !spaceAdded) ) {
+            // Długa przerwa oznacza spację
+            Serial.print("Dodano spację po czasie: ");
+            Serial.println(currentTime - signalEndTime);
+            decodedMessage += ' ';
+            spaceAdded = true;
+            signalEndTime = currentTime; // Zapobiegaj wielokrotnemu wejściu
         } 
         
             
@@ -107,5 +123,6 @@ char MorseSensor::decodeMorseSymbol(String symbol) {
     if (symbol == "--...")  return '7';
     if (symbol == "---..")  return '8';
     if (symbol == "----.")  return '9';
-    return ' '; // Zwróć spację w przypadku nieznanego symbolu
+    if (symbol == ".-.-.") return '/';
+    return '/'; // Zwróć koniec w przypadku nieznanego symbolu
 }

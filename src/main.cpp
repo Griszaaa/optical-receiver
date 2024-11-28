@@ -31,6 +31,8 @@ void setup() {
     WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
     server.begin();
 
+    Serial.begin(9600);
+
     // Inicjalizacja LCD
     lcd.init();
     lcd.backlight();
@@ -86,6 +88,7 @@ void loop() {
                     lcd.clear();
                     messageToScroll = morseSensor.getMessage();
                     client.println(messageToScroll);
+                    Serial.println(messageToScroll);
                     scrollIndex = 0;
                     scrollText();
                 }
