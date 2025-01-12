@@ -13,7 +13,6 @@ WiFiServer server(20);  // Używamy serwera TCP na porcie 20
 // ***** KONFIGURACJA CZUJNIKA MORSE'A *****
 #define sensorPin A0
 #define threshold 512
-// #define 75 // Długość kropki w milisekundach (domyślnie: dotLength nadajnika + 15 ms)
 MorseSensor morseSensor(sensorPin, threshold);
 
 // ***** KONFIGURACJA LCD *****

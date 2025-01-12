@@ -14,6 +14,7 @@ void MorseSensor::begin() {
 // Aktualizacja odbioru sygnałów
 void MorseSensor::update() {
     int sensorValue = analogRead(sensorPin);
+    Serial.println(sensorValue);
     bool currentState = sensorValue > threshold;
     unsigned long currentTime = millis();
 
@@ -123,6 +124,16 @@ char MorseSensor::decodeMorseSymbol(String symbol) {
     if (symbol == "--...")  return '7';
     if (symbol == "---..")  return '8';
     if (symbol == "----.")  return '9';
-    if (symbol == ".-.-.") return '/';
+    if (symbol == ".-.-.")  return '/';
+    if (symbol == ".-.-.-") return '.';
+    if (symbol == "--..--") return ',';
+    if (symbol == "..--..") return '?';
+    if (symbol == "-....-") return '-';
+    if (symbol == ".-..-.") return '"';
+    if (symbol == ".----.") return '\'';
+    if (symbol == "-.--.")  return '(';
+    if (symbol == "-.--.-") return ')';
+    if (symbol == "---...") return ':';
+    if (symbol == "-.-.--") return '!';
     return '/'; // Zwróć koniec w przypadku nieznanego symbolu
 }
