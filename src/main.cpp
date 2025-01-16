@@ -12,7 +12,7 @@ WiFiServer server(20);  // Używamy serwera TCP na porcie 20
 
 // ***** KONFIGURACJA CZUJNIKA MORSE'A *****
 #define sensorPin A0
-#define threshold 512
+#define threshold 450
 MorseSensor morseSensor(sensorPin, threshold);
 
 // ***** KONFIGURACJA LCD *****
@@ -30,7 +30,7 @@ void setup() {
     WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
     server.begin();
 
-    Serial.begin(9600);
+    // Serial.begin(9600);
 
     // Inicjalizacja LCD
     lcd.init();
@@ -87,7 +87,7 @@ void loop() {
                     lcd.clear();
                     messageToScroll = morseSensor.getMessage();
                     client.println(messageToScroll);
-                    Serial.println(messageToScroll);
+                    // Serial.println(messageToScroll);
                     scrollIndex = 0;
                     scrollText();
                 }

@@ -14,7 +14,7 @@ void MorseSensor::begin() {
 // Aktualizacja odbioru sygnałów
 void MorseSensor::update() {
     int sensorValue = analogRead(sensorPin);
-    Serial.println(sensorValue);
+    // Serial.println(sensorValue);
     bool currentState = sensorValue > threshold;
     unsigned long currentTime = millis();
 
@@ -32,14 +32,14 @@ void MorseSensor::update() {
             isReceiving = false;
             signalDuration = currentTime - signalStartTime;
             
-            Serial.print(signalDuration);
+            // Serial.print(signalDuration);
 
             // Rozpoznanie kropki lub kreski na podstawie czasu trwania sygnału
             if (signalDuration <= _dotLength) {
-                Serial.print(".");
+                // Serial.print(".");
                 morseSymbol += "."; // Dodajemy kropkę 
             } else if (signalDuration <= 3 * _dotLength) {
-                Serial.print("-");
+                // Serial.print("-");
                 morseSymbol += "-"; // Dodajemy kreskę
             }
 
@@ -49,8 +49,8 @@ void MorseSensor::update() {
         } else if ( (currentTime - signalEndTime >= 1.8 * _dotLength) && (!morseSymbol.isEmpty()) ) {
             // W przypadku długiej przerwy przetwarzamy kompletny symbol Morse'a
             char decodedChar = decodeMorseSymbol(morseSymbol);
-            Serial.print(currentTime - signalEndTime);
-            Serial.println(decodedChar);
+            // Serial.print(currentTime - signalEndTime);
+            // Serial.println(decodedChar);
 
             if (decodedChar != '/') {
                 decodedMessage += decodedChar; // Dodajemy symbol do wiadomości
@@ -62,14 +62,12 @@ void MorseSensor::update() {
 
         } else if ((currentTime - signalEndTime >= 4.5 * _dotLength) && (!decodedMessage.isEmpty() && !spaceAdded) ) {
             // Długa przerwa oznacza spację
-            Serial.print("Dodano spację po czasie: ");
-            Serial.println(currentTime - signalEndTime);
+            // Serial.print("Dodano spację po czasie: ");
+            // Serial.println(currentTime - signalEndTime);
             decodedMessage += ' ';
-            spaceAdded = true;
-            signalEndTime = currentTime; // Zapobiegaj wielokrotnemu wejściu
-        } 
-        
-            
+            spaceAdded = true; // Zapobiegaj wielokrotnemu wejściu do tej sekcji
+            signalEndTime = currentTime; 
+        }      
     }
 }
 
